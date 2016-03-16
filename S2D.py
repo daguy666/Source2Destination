@@ -25,6 +25,10 @@ class Inspect_Traffic(object):
         self.time = time.strftime("%H:%M:%S")
         self.date = (time.strftime("%m/%d/%Y "))
         self.time_stamp = self.date + self.time
+        
+        # To log or to print, or both 
+        self.log             = False
+        self.print_to_screen = True
         #print "--DEBUG-- packet count - > %d  | interface - > %s --DEBUG--" % (self.count, self.interface)
 
     def log_file(self, log_to_write):
@@ -41,7 +45,7 @@ class Inspect_Traffic(object):
             self.packets = sniff(iface=self.interface, count=self.count)
         except OSError, err:
             print "\n\033[31;3m[!!]\033[0m Error: Interface %s is invalid. " % self.interface
-            sys.exit(1)
+            
 
 
     def geo_lookup(self, ip_address):
@@ -56,7 +60,6 @@ class Inspect_Traffic(object):
 
         try:
             geo_json = gic.record_by_addr(ip_address)
-            #output = geo_json['country_name'], geo_json['region_code']
             output = ", ".join([geo_json['country_name'], geo_json['region_code']])
         except:
             output = "Unregistered"
@@ -75,25 +78,28 @@ class Inspect_Traffic(object):
             return 'Error="%s"' % err
 
 
-    def parse_scapy_ness(self):
+    def setup_output(self):
         """This method should parse the output
            from the packet capture.
         """
         for packet in self.packets[IP]:
             pkt = packet[0][IP]
             hw_id = packet[0]['Ethernet']
+    
             # Geo look-ups on source and dest.
             src_geo = self.geo_lookup(str(pkt.src))
             dst_geo = self.geo_lookup(str(pkt.dst))
-
+            
+            # Source and destination Mac addresses
             self.src_mac = 'Source Mac="%s"' % hw_id.src
             self.dst_mac   = 'Destination Mac="%s"'  % hw_id['Ethernet'].dst
             
-            # Source anddd dest output
+            # Source and destination IP Address
             src = 'Source="%s"' % packet[0][IP].src
-            src_location = 'Location="%s"' % src_geo
-            
             dst   = 'Destination="%s"' % packet[0][IP].dst
+           
+            # Source and destination Geolookups  
+            src_location = 'Location="%s"' % src_geo
             dst_location = 'Location="%s"' % dst_geo
             
             # Protocol to number lookup.
@@ -105,18 +111,28 @@ class Inspect_Traffic(object):
             src_vendor = 'HW_Vendor="%s"' % self.hardware_vendor(hw_id.src)
             dst_vendor = 'HW_Vendor="%s"' % self.hardware_vendor(hw_id.dst)
             
+            # Join it all together for a log line
+            self.value = " ".join([time, proto, src, src_location, self.src_mac, src_vendor, dst, dst_location, self.dst_mac, dst_vendor])
             
-            ########TODO TEST THE VALUE OUT. HACKED TOGETHER ON THE TRAIN.
-            value = " ".join([time, proto, src, src_location, self.src_mac, src_vendor, dst, dst_location, self.dst_mac, dst_vendor])
-            # Write to log file
-            self.log_file(value+"\n")
-            # Print to screen
-            #print self.value
+            # Built in logic for printing or logging to a file (or both)
+            self.print_and_or_log()
+            
+
+    def print_and_or_log(self):
+        """Will check to either print, log, 
+           or both.
+        """
+        if self.log:
+            self.log_file(self.value+"\n")
+        
+        if self.print_to_screen:
+            print self.value
 
     def main(self):
+        """Main method.
+        """
         self.sniff_packets()
-        self.parse_scapy_ness()
-
+        self.setup_output()
 
 
 if __name__ == '__main__':
