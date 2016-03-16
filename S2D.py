@@ -1,4 +1,19 @@
 #!/usr/bin/env python
+# -----------------------------------------------------------
+# Filename      : S2D.py
+# Created By    : Joe Pistone
+# Date Created  : 16-Mar-2016 18:16
+# Date Modified :
+#------------------------------------------------------------
+# License       : Development
+#
+# Description   : Network Discovery and fingerprinting tool
+#
+# (c) Copyright 2015, TheKillingTime all rights reserved.
+#-----------------------------------------------------------
+
+__author__  = "Joe Pistone"
+__version__ = "1.5" 
 
 import sys
 import time
