@@ -37,6 +37,7 @@ class Inspect_Traffic(object):
         self.count = int(p2c)
         self.interface = interface
         print "\033[32;3m[*]\033[0m Capturing %d packets to analyze on interface %s ..." % (self.count, self.interface)
+        # Building timestamp 
         self.time = time.strftime("%H:%M:%S")
         self.date = (time.strftime("%m/%d/%Y "))
         self.time_stamp = self.date + self.time
@@ -68,7 +69,7 @@ class Inspect_Traffic(object):
         try:
             gic = pygeoip.GeoIP(self.geodb)
         except IOError:
-            print "Cannot open %s." % self.geodb
+            print "\033[31;3m[!!]\033[0m Error: Cannot open %s." % self.geodb
             sys.exit(1)
 
         try:
@@ -135,9 +136,10 @@ class Inspect_Traffic(object):
         """Will check to either print, log, 
            or both.
         """
+        # Log
         if self.log:
             self.log_file(self.value+"\n")
-        
+        # Screen 
         if self.print_to_screen:
             print self.value
 
@@ -149,7 +151,9 @@ class Inspect_Traffic(object):
 
 
 if __name__ == '__main__':
+    # Checks for root
     if os.getuid() == 0:
+        # Checks for command line args
         if len(sys.argv) != 3:
             print "Usage: %s <interface> <number of packets to capture>" % sys.argv[0]
             sys.exit(1)
@@ -158,7 +162,7 @@ if __name__ == '__main__':
         interface = sys.argv[1]
         p2c       = sys.argv[2]
 
-        # Validating user input as a digit.
+        # Validating user input for packets is a digit.
         if p2c.isdigit():
             inspect = Inspect_Traffic(p2c, interface)
             inspect.main()
