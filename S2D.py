@@ -61,8 +61,6 @@ class Inspect_Traffic(object):
         except OSError, err:
             print "\n\033[31;3m[!!]\033[0m Error: Interface %s is invalid. " % self.interface
             
-
-
     def geo_lookup(self, ip_address):
         """This method will do a geo lookup
            against an ip address.
@@ -107,17 +105,17 @@ class Inspect_Traffic(object):
             
             # Source and destination Mac addresses
             self.src_mac = 'Source Mac="%s"' % hw_id.src
-            self.dst_mac   = 'Destination Mac="%s"'  % hw_id['Ethernet'].dst
+            self.dst_mac = 'Destination Mac="%s"'  % hw_id['Ethernet'].dst
             
             # Source and destination IP Address
             src = 'Source="%s"' % packet[0][IP].src
-            dst   = 'Destination="%s"' % packet[0][IP].dst
+            dst = 'Destination="%s"' % packet[0][IP].dst
            
             # Source and destination Geolookups  
             src_location = 'Location="%s"' % src_geo
             dst_location = 'Location="%s"' % dst_geo
             
-            # Protocol to number lookup.
+            # Protocol to number lookup, also packing timestamp here
             proto_2_num = str(packet[0][IP].proto)
             time  = 'Timestamp="%s"' % self.time_stamp
             proto = 'Protocol="%s"' % proto_to_numbers.protocols[proto_2_num]
@@ -155,16 +153,12 @@ if __name__ == '__main__':
         if len(sys.argv) != 3:
             print "Usage: %s <interface> <number of packets to capture>" % sys.argv[0]
             sys.exit(1)
+
         # Get command line args for interface and packets to capture.
         interface = sys.argv[1]
         p2c       = sys.argv[2]
 
-        # DEBUG
-        '''
-        print type(sys.argv[0])
-        print type(sys.argv[1])
-        print type(sys.argv[2])
-        '''
+        # Validating user input as a digit.
         if p2c.isdigit():
             inspect = Inspect_Traffic(p2c, interface)
             inspect.main()
