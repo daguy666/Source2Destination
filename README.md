@@ -57,7 +57,8 @@ class Inspect_Traffic(object):
     </snip>
 ```    
 
-####TODO: 
+
+#### TODO: 
 - Finish implementing logging library
 - Finish testing around streaming to the screen and writing to log file. 
 
