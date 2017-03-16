@@ -45,7 +45,6 @@ class Inspect_Traffic(object):
         # To log or to print, or both 
         self.log             = False
         self.print_to_screen = True
-        #print "--DEBUG-- packet count - > %d  | interface - > %s --DEBUG--" % (self.count, self.interface)
 
     def log_file(self, log_to_write):
         # This is temporary <= I bet it's not. 

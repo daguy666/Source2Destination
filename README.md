@@ -56,3 +56,8 @@ class Inspect_Traffic(object):
     self.print_to_screen = True
     </snip>
 ```    
+
+####TODO: 
+- Finish implementing logging library
+- Finish testing around streaming to the screen and writing to log file. 
+
