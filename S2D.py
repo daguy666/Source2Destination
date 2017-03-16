@@ -43,18 +43,38 @@ class Inspect_Traffic(object):
         self.time_stamp = self.date + self.time
         
         # To log or to print, or both 
-        self.log             = False
-        self.print_to_screen = True
+        self.log             = True
+        self.print_to_screen = False
+        
+        # Log to this location
+        self.log_to = '/var/log/packet_direction/'
+        self.log_to_file = 'network.log'
+        self.network_log = self.log_to + self.log_to_file
+
+    def check_log_path(self):
+        """
+        Checks to see if log path exists. Then creates it.
+        """
+        if not os.path.exists(self.log_to):
+            print "[+] Directory does not exist. Creating %s" % self.log_to
+            os.makedirs(self.log_to)
+            network_log = self.log_to + self.log_to_file
+            open(self.network_log, 'a').close()
 
     def log_file(self, log_to_write):
+        """
+        Log data to a file.
+        """
         # This is temporary <= I bet it's not. 
         # Re factor with the logging library later on.
-        a = open('/var/log/packet_direction/network.log', 'a')
+        self.check_log_path()
+        a = open(self.network_log, 'a')
         a.write(log_to_write)
         a.close()
 
     def sniff_packets(self):
-        """Let's Sniff some packets!!
+        """
+        Let's Sniff some packets!!
         """
         try:
             self.packets = sniff(iface=self.interface, count=self.count)
@@ -62,8 +82,9 @@ class Inspect_Traffic(object):
             print "\n\033[31;3m[!!]\033[0m Error: Interface %s is invalid. " % self.interface
             
     def geo_lookup(self, ip_address):
-        """This method will do a geo lookup
-           against an ip address.
+        """
+        This method will do a geo lookup
+        against an ip address.
         """
         try:
             gic = pygeoip.GeoIP(self.geodb)
@@ -80,8 +101,9 @@ class Inspect_Traffic(object):
         return output
 
     def hardware_vendor(self, mac):
-        """This method will take a mac address
-           The pull out the oui and analyze it.
+        """
+        This method will take a mac address
+        The pull out the oui and analyze it.
         """
         try:
             hw_id = EUI(mac)
@@ -92,8 +114,9 @@ class Inspect_Traffic(object):
 
 
     def setup_output(self):
-        """This method should parse the output
-           from the packet capture.
+        """
+        This method should parse the output
+        from the packet capture.
         """
         for packet in self.packets[IP]:
             pkt = packet[0][IP]
@@ -133,18 +156,20 @@ class Inspect_Traffic(object):
             
 
     def print_and_or_log(self):
-        """Will check to either print, log, 
-           or both.
+        """
+        Will check to either print, log, 
+        or both.
         """
         # Log
         if self.log:
-            self.log_file(self.value+"\n")
+            self.log_file(str(self.value) + "\n")
         # Screen 
         if self.print_to_screen:
             print self.value
 
     def main(self):
-        """Main method.
+        """
+        Main method.
         """
         self.sniff_packets()
         self.setup_output()
