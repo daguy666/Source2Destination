@@ -125,7 +125,8 @@ class Inspect_Traffic(object):
             dst_vendor = 'HW_Vendor="%s"' % self.hardware_vendor(hw_id.dst)
             
             # Join it all together for a log line
-            self.value = " ".join([time, proto, src, src_location, self.src_mac, src_vendor, dst, dst_location, self.dst_mac, dst_vendor])
+            self.value = " ".join([time, proto, src, src_location, self.src_mac, 
+                                   src_vendor, dst, dst_location, self.dst_mac, dst_vendor])
             
             # Built in logic for printing or logging to a file (or both)
             self.print_and_or_log()
