@@ -15,15 +15,19 @@
 __author__  = "Joe Pistone"
 __version__ = "1.5" 
 
-import sys
-import time
-import logging
-# Cleans up a little of scapy's run time mess.
-logging.getLogger('scapy.runtime').setLevel(logging.ERROR)
-import pygeoip
-import proto_to_numbers
-from netaddr import *
-from scapy.all import *
+try:
+    import sys
+    import time
+    import logging
+    # Cleans up a little of scapy's run time mess.
+    logging.getLogger('scapy.runtime').setLevel(logging.ERROR)
+    import pygeoip
+    import proto_to_numbers
+    from netaddr import *
+    from scapy.all import *
+except ImportError, err:
+    print "[!] ImportError: %s " % err
+    sys.exit(1)
 
 # Moar scapy clean up
 conf.verb=0
